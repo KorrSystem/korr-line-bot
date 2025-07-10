@@ -8,18 +8,24 @@ const config = {
 
 const client = new line.Client(config);
 const app = express();
+
 app.use(express.json());
 
 app.post('/webhook', line.middleware(config), (req, res) => {
   Promise
     .all(req.body.events.map(handleEvent))
-    .then(result => res.json(result));
+    .then((result) => res.status(200).json(result)) // ✅ 明確回傳 200
+    .catch((err) => {
+      console.error('Error handling event:', err); // ✅ 錯誤日誌
+      res.status(500).end(); // 若有錯誤也要回傳結束
+    });
 });
 
 function handleEvent(event) {
   if (event.type !== 'message' || event.message.type !== 'text') {
     return Promise.resolve(null);
   }
+
   return client.replyMessage(event.replyToken, {
     type: 'text',
     text: 'Hello from Korr!',
