@@ -9,15 +9,14 @@ const config = {
 const client = new line.Client(config);
 const app = express();
 
-app.use(express.json());
-
-app.post('/webhook', line.middleware(config), (req, res) => {
+// ✅ 使用 raw body，避免 LINE middleware 錯誤
+app.post('/webhook', express.raw({ type: '*/*' }), line.middleware(config), (req, res) => {
   Promise
     .all(req.body.events.map(handleEvent))
-    .then((result) => res.status(200).json(result)) // ✅ 明確回傳 200
+    .then((result) => res.status(200).json(result))
     .catch((err) => {
-      console.error('Error handling event:', err); // ✅ 錯誤日誌
-      res.status(500).end(); // 若有錯誤也要回傳結束
+      console.error('Error handling event:', err);
+      res.status(500).end();
     });
 });
 
