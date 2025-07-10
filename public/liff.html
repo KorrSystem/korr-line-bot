@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>Get LINE User ID</title>
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+</head>
+<body>
+  <h2>🔍 取得 LINE 使用者資訊</h2>
+  <pre id="userInfo">載入中...</pre>
+
+  <script>
+    async function main() {
+      await liff.init({ liffId: "2007730703-YVNGkwWe" });
+
+      if (!liff.isLoggedIn()) {
+        liff.login();
+      } else {
+        const profile = await liff.getProfile();
+        document.getElementById("userInfo").innerText =
+          `✅ Display Name: ${profile.displayName}\n🆔 User ID: ${profile.userId}`;
+      }
+    }
+
+    main();
+  </script>
+</body>
+</html>
